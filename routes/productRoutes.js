@@ -69,7 +69,6 @@ router.get("/:id", async (req, res) => {
         message: "Product not found.",
       });
     }
-
     return res.status(200).json({
       success: true,
       product,
