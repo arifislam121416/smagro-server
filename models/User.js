@@ -112,6 +112,22 @@ async function updateUserStatus(id, status) {
   return result;
 }
 
+async function deleteUser(id) {
+  if (!ObjectId.isValid(id)) {
+    return null;
+  }
+
+  const result = await usersCollection().deleteOne({
+    _id: new ObjectId(id),
+  });
+
+  if (result.deletedCount === 0) {
+    return null;
+  }
+
+  return result;
+}
+
 module.exports = {
   findUserByEmail,
   findUserById,
@@ -119,4 +135,5 @@ module.exports = {
   getAllUsers,
   updateUserRole,
   updateUserStatus,
+  deleteUser,
 };

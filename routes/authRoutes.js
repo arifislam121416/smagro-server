@@ -9,6 +9,7 @@ const {
   getAllUsers,
   updateUserRole,
   updateUserStatus,
+  deleteUser,
 } = require("../models/User");
 
 const {
@@ -41,6 +42,7 @@ router.post("/register", async (req, res) => {
       email,
       phone,
       password,
+      profileImage,
     } = req.body;
 
     if (!name || !email || !phone || !password) {
@@ -108,6 +110,7 @@ router.post("/register", async (req, res) => {
       email: normalizedEmail,
       phone: phone.trim(),
       passwordHash,
+      profileImage: profileImage || "",
       role: "user",
       status: "active",
       createdAt: new Date(),
@@ -463,6 +466,47 @@ router.patch(
     } catch (error) {
       console.error(
         "Update status error:",
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error.",
+      });
+    }
+  }
+);
+
+
+/* =========================
+   DELETE USER
+   ADMIN ONLY
+========================= */
+
+router.delete(
+  "/users/:id",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const deletedUser = await deleteUser(
+        req.params.id
+      );
+
+      if (!deletedUser) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found.",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "User deleted successfully.",
+      });
+    } catch (error) {
+      console.error(
+        "Delete user error:",
         error
       );
 
